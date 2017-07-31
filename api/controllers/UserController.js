@@ -26,5 +26,27 @@ module.exports = {
       
       return ResponseService.json(200, res, "User created successfully", responseData);
     });
+  },
+  getAllUsers: function(req, res) {
+    User.find().exec(function(err, finn) {
+      if (err) {
+        return invalidEmailOrPassword(res);
+      }
+      signInUser(req, res, finn);
+    });
   }
 };
+
+function signInUser(req, res, finn) {
+  var responseData = {
+    users: finn,
+    token: generateToken(req.current_user.id)
+  };
+
+  return ResponseService.json(200, res, "All users", responseData);
+
+};
+
+function generateToken(user_id) {
+  return JwtService.issue({id: user_id});
+}
